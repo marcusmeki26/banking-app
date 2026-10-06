@@ -8,5 +8,5 @@ import lombok.Setter;
 public class AccountResponse {
   private String accountNumber;
   private String accountHolderName;
-  private Float deposit;
+  private Float balance;
 }
