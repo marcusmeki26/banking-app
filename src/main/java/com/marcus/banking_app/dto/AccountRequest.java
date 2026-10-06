@@ -13,6 +13,6 @@ public class AccountRequest {
   @NotEmpty (message = "Account Holder Name is required")
   private String accountHolderName;
   @NotNull (message = "Deposit is required")
-  @Min (value = 1, message = "deposit should be greater than zero")
+  @Min (value = 1, message = "Deposit should be greater than zero")
   private Float deposit;
 }

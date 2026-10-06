@@ -7,9 +7,12 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.marcus.banking_app.enums.TransactionType;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,9 +24,11 @@ public class Transactions {
   @GeneratedValue (strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  // private String transactionReference;
+  private String transactionReference;
 
-  // private String accountNumber; JOIN? :REMOVE-COMMENT
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_number", referencedColumnName = "accountNumber")
+  private Accounts account;
   
   private TransactionType transactionType;
 
@@ -31,7 +36,7 @@ public class Transactions {
 
   private Float balanace;
 
-  // private String referenceAccount;
+  private String referenceAccount;
 
   @CreationTimestamp 
   private LocalDateTime createdAt;

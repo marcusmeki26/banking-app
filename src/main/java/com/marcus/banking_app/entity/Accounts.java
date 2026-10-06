@@ -1,6 +1,7 @@
 package com.marcus.banking_app.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -9,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +31,9 @@ public class Accounts {
   private String accountName;
 
   private Float balance;
+
+  @OneToMany(mappedBy = "account")
+  private List<Transactions> transactions;
 
   @CreationTimestamp 
   private LocalDateTime createdAt;

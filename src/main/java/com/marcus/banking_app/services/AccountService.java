@@ -6,12 +6,15 @@ import org.springframework.stereotype.Service;
 
 import com.marcus.banking_app.dto.AccountRequest;
 import com.marcus.banking_app.dto.AccountResponse;
+import com.marcus.banking_app.dto.DepositRequest;
+import com.marcus.banking_app.dto.DepositResponse;
 import com.marcus.banking_app.entity.Accounts;
 import com.marcus.banking_app.exception.ConflictException;
 import com.marcus.banking_app.exception.ResourceNotFoundException;
 import com.marcus.banking_app.mapper.AccountMapper;
 import com.marcus.banking_app.repository.AccountRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service 
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AccountService {
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
+  private final TransactionService transactionService;
 
   /**
    * Fetches all record from {@code Accounts} entity
@@ -54,6 +58,34 @@ public class AccountService {
     return accountMapper.toReponse(accountRepository.save(account));
   }
 
+  /**
+   * Performs deposit based on the specified account number
+   * @param depositRequest an object of {@code DepositRequest}
+   * @return an object of {@code DepositResponse}
+   */
+  @Transactional 
+  public DepositResponse deposit(DepositRequest depositRequest){
+  
+    Accounts account = getAccountByAccountNumber(depositRequest.getAccountNumber());
+    DepositResponse depositResponse = new DepositResponse();
+
+    transactionService.InsertTransactionDeposit(account, depositRequest);
+
+    depositResponse.setPreviousBalance(account.getBalance());
+    depositResponse.setDepositAmount(depositRequest.getDeposit());
+
+    Float newBalance = depositRequest.getDeposit() + account.getBalance();
+    account.setBalance(newBalance);
+    accountRepository.save(account);
+
+    depositResponse.setNewBalance(account.getBalance());
+
+    return depositResponse;
+  }
+
+  // ========================================================
+  // Utilities
+  // ========================================================
   /**
    * Gets a record of {@code Accounts} entity
    * @param accountNumber the value of account number to fetch
