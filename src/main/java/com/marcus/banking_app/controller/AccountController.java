@@ -14,6 +14,8 @@ import com.marcus.banking_app.dto.AccountRequest;
 import com.marcus.banking_app.dto.AccountResponse;
 import com.marcus.banking_app.dto.DepositRequest;
 import com.marcus.banking_app.dto.DepositResponse;
+import com.marcus.banking_app.dto.WithdrawRequest;
+import com.marcus.banking_app.dto.WithdrawResponse;
 import com.marcus.banking_app.services.AccountService;
 
 import jakarta.validation.Valid;
@@ -49,5 +51,12 @@ public class AccountController {
     @Valid @RequestBody DepositRequest depositRequest
   ){
     return ResponseEntity.ok().body(accountService.deposit(depositRequest));
+  }
+
+  @PostMapping("/withdraw")
+  public ResponseEntity<WithdrawResponse> deposit(
+    @Valid @RequestBody WithdrawRequest withdrawRequest
+  ){
+    return ResponseEntity.ok().body(accountService.withdraw(withdrawRequest));
   }
 }

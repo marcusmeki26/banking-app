@@ -3,6 +3,7 @@ package com.marcus.banking_app.services;
 import org.springframework.stereotype.Service;
 
 import com.marcus.banking_app.dto.DepositRequest;
+import com.marcus.banking_app.dto.WithdrawRequest;
 import com.marcus.banking_app.entity.Accounts;
 import com.marcus.banking_app.entity.Transactions;
 import com.marcus.banking_app.enums.TransactionType;
@@ -16,6 +17,11 @@ import lombok.RequiredArgsConstructor;
 public class TransactionService {
   private final TransactionRepository transactionRepository;
 
+  /**
+   * Inserts a deposit transaction to {@code Transactions} entity
+   * @param account an object of {@code Accounts} that performs the action
+   * @param depositRequest an object of {@code DepositRequest} 
+   */
   public void InsertTransactionDeposit(Accounts account, DepositRequest depositRequest){
     Transactions transaction = new Transactions();
 
@@ -28,9 +34,30 @@ public class TransactionService {
     transactionRepository.save(transaction);
   }
 
+  /**
+   * Inserts a withdraw transaction to {@code Transactions} entity
+   * @param account an object of {@code Accounts} that performs the action
+   * @param withdrawRequest an object of {@code WithdrawRequest}
+   */
+  public void InsertTransactionWithdraw(Accounts account, WithdrawRequest withdrawRequest){
+    Transactions transaction = new Transactions();
+
+    String transactionRef = String.format("TXN-%03d", getNextTransactionReference());
+    transaction.setTransactionReference(transactionRef);
+    transaction.setAccount(account);
+    transaction.setTransactionType(TransactionType.WITHDRAW);
+    transaction.setAmount(withdrawRequest.getWithdrawAmount());
+    transaction.setBalanace(account.getBalance() - withdrawRequest.getWithdrawAmount());
+    transactionRepository.save(transaction);
+  }
+
+  /**
+   * Gets the last record from {@code Transactions} entity
+   * @return the last id from {@code Transactions} entity, if empty returns 1
+   */
   public Integer getNextTransactionReference(){
     TransactionsIdOnly transaction = transactionRepository.findTopProjectedByOrderByIdDesc();
   
-    return (transaction == null) ? 1 : transaction.id();  
+    return (transaction == null) ? 1 : transaction.id() + 1;  
   }
 }

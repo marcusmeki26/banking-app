@@ -8,8 +8,11 @@ import com.marcus.banking_app.dto.AccountRequest;
 import com.marcus.banking_app.dto.AccountResponse;
 import com.marcus.banking_app.dto.DepositRequest;
 import com.marcus.banking_app.dto.DepositResponse;
+import com.marcus.banking_app.dto.WithdrawRequest;
+import com.marcus.banking_app.dto.WithdrawResponse;
 import com.marcus.banking_app.entity.Accounts;
 import com.marcus.banking_app.exception.ConflictException;
+import com.marcus.banking_app.exception.InvalidValueException;
 import com.marcus.banking_app.exception.ResourceNotFoundException;
 import com.marcus.banking_app.mapper.AccountMapper;
 import com.marcus.banking_app.repository.AccountRepository;
@@ -65,7 +68,6 @@ public class AccountService {
    */
   @Transactional 
   public DepositResponse deposit(DepositRequest depositRequest){
-  
     Accounts account = getAccountByAccountNumber(depositRequest.getAccountNumber());
     DepositResponse depositResponse = new DepositResponse();
 
@@ -81,6 +83,28 @@ public class AccountService {
     depositResponse.setNewBalance(account.getBalance());
 
     return depositResponse;
+  }
+
+  @Transactional 
+  public WithdrawResponse withdraw(WithdrawRequest withdrawRequest){
+    Accounts account = getAccountByAccountNumber(withdrawRequest.getAccountNumber());
+    WithdrawResponse withdrawResponse = new WithdrawResponse();
+
+    if(withdrawRequest.getWithdrawAmount() > account.getBalance())
+      throw new InvalidValueException("INVALID_VALUE", "Withdraw amount is greater than balance");
+
+    transactionService.InsertTransactionWithdraw(account, withdrawRequest);
+
+    withdrawResponse.setPreviousBalance(account.getBalance());
+    withdrawResponse.setPreviousBalance(withdrawRequest.getWithdrawAmount());
+
+    Float newBalance = account.getBalance() - withdrawRequest.getWithdrawAmount();
+    account.setBalance(newBalance);
+    accountRepository.save(account);
+
+    withdrawResponse.setNewBalance(newBalance);
+
+    return withdrawResponse;
   }
 
   // ========================================================

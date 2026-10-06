@@ -22,4 +22,9 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorMessage> handleResourceNotFoundException(ResourceNotFoundException ex){
     return new ResponseEntity<>(new ErrorMessage(ex.getCode(), ex.getMessage()), HttpStatus.UNPROCESSABLE_CONTENT);
   }
+
+  @ExceptionHandler(InvalidValueException.class)
+  public ResponseEntity<ErrorMessage> handleInvalidValueException(InvalidValueException ex){
+    return new ResponseEntity<>(new ErrorMessage(ex.getCode(), ex.getMessage()), HttpStatus.UNPROCESSABLE_CONTENT);
+  }
 }
