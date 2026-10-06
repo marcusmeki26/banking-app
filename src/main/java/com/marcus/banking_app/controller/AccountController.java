@@ -1,5 +1,7 @@
 package com.marcus.banking_app.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,11 +23,9 @@ import lombok.AllArgsConstructor;
 public class AccountController {
   private AccountService accountService;
 
-  @PostMapping 
-  public ResponseEntity<AccountResponse> postAccount(
-    @Valid @RequestBody AccountRequest accountRequest
-  ){
-    return ResponseEntity.ok().body(accountService.postAccount(accountRequest));
+  @GetMapping 
+  public ResponseEntity<List<AccountResponse>> getAllAccounts(){
+    return ResponseEntity.ok().body(accountService.getAllAccounts());
   }
 
   @GetMapping("/{accountNumber}")
@@ -33,5 +33,12 @@ public class AccountController {
     @PathVariable String accountNumber
   ){
     return ResponseEntity.ok().body(accountService.getBalance(accountNumber));
+  }
+
+  @PostMapping 
+  public ResponseEntity<AccountResponse> postAccount(
+    @Valid @RequestBody AccountRequest accountRequest
+  ){
+    return ResponseEntity.ok().body(accountService.postAccount(accountRequest));
   }
 }

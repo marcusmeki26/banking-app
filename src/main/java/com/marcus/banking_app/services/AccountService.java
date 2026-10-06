@@ -1,5 +1,7 @@
 package com.marcus.banking_app.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.marcus.banking_app.dto.AccountRequest;
@@ -17,6 +19,14 @@ import lombok.RequiredArgsConstructor;
 public class AccountService {
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
+
+  /**
+   * Fetches all record from {@code Accounts} entity
+   * @return returns a {@code List} of {@code AccountResponse}
+   */
+  public List<AccountResponse> getAllAccounts(){
+    return accountMapper.toResponseList(accountRepository.findAll());
+  }
 
   /**
    * Retrieves the balance of the specied account number

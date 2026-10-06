@@ -11,7 +11,6 @@ import com.marcus.banking_app.entity.Accounts;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
   @Mapping(source = "accountName", target = "accountHolderName")
-  @Mapping(source = "balance", target = "deposit")
   AccountResponse toReponse(Accounts account);
   List<AccountResponse> toResponseList(List<Accounts> accounts);
 }
