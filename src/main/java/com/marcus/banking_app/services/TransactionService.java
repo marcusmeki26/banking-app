@@ -3,6 +3,7 @@ package com.marcus.banking_app.services;
 import org.springframework.stereotype.Service;
 
 import com.marcus.banking_app.dto.DepositRequest;
+import com.marcus.banking_app.dto.TransferRequest;
 import com.marcus.banking_app.dto.WithdrawRequest;
 import com.marcus.banking_app.entity.Accounts;
 import com.marcus.banking_app.entity.Transactions;
@@ -48,6 +49,25 @@ public class TransactionService {
     transaction.setTransactionType(TransactionType.WITHDRAW);
     transaction.setAmount(withdrawRequest.getWithdrawAmount());
     transaction.setBalanace(account.getBalance() - withdrawRequest.getWithdrawAmount());
+    transactionRepository.save(transaction);
+  }
+
+  /**
+   * Inserts a transfer transction to {@code Transactions} entity
+   * @param sourceAccount an object of {@code Accounts} entity which is the source of funds
+   * @param destinationAccount an object of {@code Accounts} entity which is the destination of funds
+   * @param transferRequest an object of {@code TransferRequest}
+   */
+  public void InsertTransactionTransfer(Accounts sourceAccount, Accounts destinationAccount, TransferRequest transferRequest){
+    Transactions transaction = new Transactions();
+
+    String transactionRef = String.format("TXN-%03d", getNextTransactionReference());
+    transaction.setTransactionReference(transactionRef);
+    transaction.setAccount(sourceAccount);
+    transaction.setTransactionType(TransactionType.TRANSFER);
+    transaction.setAmount(transferRequest.getTransferAmount());
+    transaction.setBalanace(sourceAccount.getBalance() - transferRequest.getTransferAmount());
+    transaction.setReferenceAccount(destinationAccount.getAccountNumber());
     transactionRepository.save(transaction);
   }
 

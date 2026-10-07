@@ -8,6 +8,8 @@ import com.marcus.banking_app.dto.AccountRequest;
 import com.marcus.banking_app.dto.AccountResponse;
 import com.marcus.banking_app.dto.DepositRequest;
 import com.marcus.banking_app.dto.DepositResponse;
+import com.marcus.banking_app.dto.TransferRequest;
+import com.marcus.banking_app.dto.TransferResponse;
 import com.marcus.banking_app.dto.WithdrawRequest;
 import com.marcus.banking_app.dto.WithdrawResponse;
 import com.marcus.banking_app.entity.Accounts;
@@ -85,6 +87,11 @@ public class AccountService {
     return depositResponse;
   }
 
+  /**
+   * Performs withdrawal process based on account number
+   * @param withdrawRequest an object of {@code WithdrawRequest}
+   * @return an object of {@code WithdrawResponse}
+   */
   @Transactional 
   public WithdrawResponse withdraw(WithdrawRequest withdrawRequest){
     Accounts account = getAccountByAccountNumber(withdrawRequest.getAccountNumber());
@@ -105,6 +112,39 @@ public class AccountService {
     withdrawResponse.setNewBalance(newBalance);
 
     return withdrawResponse;
+  }
+  
+  /**
+   * Performs transfer of funds from source to destination
+   * @param transferRequest an object of {@code TransferRequest}
+   * @return an object of {@code TransferResponse}
+   */
+  @Transactional 
+  public TransferResponse transfer(TransferRequest transferRequest){
+    if(transferRequest.getSourceAccountNumber().equals(transferRequest.getDestinationAccountNumber()))
+      throw new InvalidValueException("INVALID_VALUE", "Source and Destination has the same account number");
+
+    Accounts sourceAccount = getAccountByAccountNumber(transferRequest.getSourceAccountNumber());
+    Accounts destinationAccount = getAccountByAccountNumber(transferRequest.getDestinationAccountNumber());
+    TransferResponse transferResponse = new TransferResponse();
+
+    if(transferRequest.getTransferAmount() > sourceAccount.getBalance())
+      throw new InvalidValueException("INVALID_VALUE", "Transfer amount is greater then balance");
+
+    transferResponse.setSourceAccountNumber(sourceAccount.getAccountNumber());
+    transferResponse.setDestinationAccountNumber(destinationAccount.getAccountNumber());
+    transferResponse.setTransferAmount(transferRequest.getTransferAmount());
+
+    transactionService.InsertTransactionTransfer(sourceAccount, destinationAccount, transferRequest);
+
+    Float transferAmount = transferRequest.getTransferAmount();
+    Float newBalance = sourceAccount.getBalance() - transferAmount;
+    sourceAccount.setBalance(newBalance);
+    destinationAccount.setBalance(destinationAccount.getBalance() + transferAmount);
+    accountRepository.save(sourceAccount);
+    accountRepository.save(destinationAccount);
+
+    return transferResponse;
   }
 
   // ========================================================
