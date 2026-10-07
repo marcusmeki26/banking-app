@@ -21,7 +21,7 @@ import lombok.Setter;
 public class Accounts {
   @Id 
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "acc_id_sequence")
-  @SequenceGenerator (name = "acc_id_sequence", sequenceName = "acc_id_sequence", initialValue = 100000, allocationSize = 1)
+  @SequenceGenerator (name = "acc_id_sequence", sequenceName = "acc_id_sequence", initialValue = 100_000, allocationSize = 1)
   private Long id;
 
   @Column (unique = true)

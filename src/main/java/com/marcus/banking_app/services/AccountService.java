@@ -15,7 +15,6 @@ import com.marcus.banking_app.dto.WithdrawResponse;
 import com.marcus.banking_app.entity.Accounts;
 import com.marcus.banking_app.exception.ConflictException;
 import com.marcus.banking_app.exception.InvalidValueException;
-import com.marcus.banking_app.exception.ResourceNotFoundException;
 import com.marcus.banking_app.mapper.AccountMapper;
 import com.marcus.banking_app.repository.AccountRepository;
 
@@ -28,6 +27,7 @@ public class AccountService {
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
   private final TransactionService transactionService;
+  private final UtilityService utilityService;
 
   /**
    * Fetches all record from {@code Accounts} entity
@@ -43,7 +43,7 @@ public class AccountService {
    * @return an object of {@code AccountResponse}
    */
   public AccountResponse getBalance(String accountNumber){
-    return accountMapper.toReponse(getAccountByAccountNumber(accountNumber));
+    return accountMapper.toReponse(utilityService.getAccountByAccountNumber(accountNumber));
   }
 
   /**
@@ -70,7 +70,7 @@ public class AccountService {
    */
   @Transactional 
   public DepositResponse deposit(DepositRequest depositRequest){
-    Accounts account = getAccountByAccountNumber(depositRequest.getAccountNumber());
+    Accounts account = utilityService.getAccountByAccountNumber(depositRequest.getAccountNumber());
     DepositResponse depositResponse = new DepositResponse();
 
     transactionService.InsertTransactionDeposit(account, depositRequest);
@@ -94,7 +94,7 @@ public class AccountService {
    */
   @Transactional 
   public WithdrawResponse withdraw(WithdrawRequest withdrawRequest){
-    Accounts account = getAccountByAccountNumber(withdrawRequest.getAccountNumber());
+    Accounts account = utilityService.getAccountByAccountNumber(withdrawRequest.getAccountNumber());
     WithdrawResponse withdrawResponse = new WithdrawResponse();
 
     if(withdrawRequest.getWithdrawAmount() > account.getBalance())
@@ -124,8 +124,8 @@ public class AccountService {
     if(transferRequest.getSourceAccountNumber().equals(transferRequest.getDestinationAccountNumber()))
       throw new InvalidValueException("INVALID_VALUE", "Source and Destination has the same account number");
 
-    Accounts sourceAccount = getAccountByAccountNumber(transferRequest.getSourceAccountNumber());
-    Accounts destinationAccount = getAccountByAccountNumber(transferRequest.getDestinationAccountNumber());
+    Accounts sourceAccount = utilityService.getAccountByAccountNumber(transferRequest.getSourceAccountNumber());
+    Accounts destinationAccount = utilityService.getAccountByAccountNumber(transferRequest.getDestinationAccountNumber());
     TransferResponse transferResponse = new TransferResponse();
 
     if(transferRequest.getTransferAmount() > sourceAccount.getBalance())
@@ -150,20 +150,6 @@ public class AccountService {
   // ========================================================
   // Utilities
   // ========================================================
-  /**
-   * Gets a record of {@code Accounts} entity
-   * @param accountNumber the value of account number to fetch
-   * @return an object of {@code Accounts} entity
-   */
-  public Accounts getAccountByAccountNumber(String accountNumber){
-    Accounts account = accountRepository.findByAccountNumber(accountNumber);
-
-    if(account == null)
-      throw new ResourceNotFoundException("ACCOUNT_NUMBER_NOT_EXISTING", "No existing user found");
-
-    return account;
-  }
-
   /**
    * Checks if account number exists
    * @param accountNumber the value of account number to check

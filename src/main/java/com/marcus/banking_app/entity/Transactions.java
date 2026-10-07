@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.marcus.banking_app.enums.TransactionType;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,11 +32,12 @@ public class Transactions {
   @JoinColumn(name = "account_number", referencedColumnName = "accountNumber")
   private Accounts account;
   
+  @Enumerated(EnumType.STRING)
   private TransactionType transactionType;
 
   private Float amount;
 
-  private Float balanace;
+  private Float balance;
 
   private String referenceAccount;
 

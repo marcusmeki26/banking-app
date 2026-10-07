@@ -1,13 +1,17 @@
 package com.marcus.banking_app.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.marcus.banking_app.dto.DepositRequest;
+import com.marcus.banking_app.dto.TransactionResponse;
 import com.marcus.banking_app.dto.TransferRequest;
 import com.marcus.banking_app.dto.WithdrawRequest;
 import com.marcus.banking_app.entity.Accounts;
 import com.marcus.banking_app.entity.Transactions;
 import com.marcus.banking_app.enums.TransactionType;
+import com.marcus.banking_app.mapper.TransactionMapper;
 import com.marcus.banking_app.record.TransactionsIdOnly;
 import com.marcus.banking_app.repository.TransactionRepository;
 
@@ -17,6 +21,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor 
 public class TransactionService {
   private final TransactionRepository transactionRepository;
+  private final TransactionMapper transactionMapper;
+  private final UtilityService utilityService;
+
+  public List<TransactionResponse> getTransactionsByAccountNumber(String accountNumber){
+    Accounts account = utilityService.getAccountByAccountNumber(accountNumber);
+
+    return transactionMapper.toResponseList(transactionRepository.findByAccount_accountNumber(account.getAccountNumber()));
+  }
 
   /**
    * Inserts a deposit transaction to {@code Transactions} entity
@@ -31,7 +43,7 @@ public class TransactionService {
     transaction.setAccount(account);
     transaction.setTransactionType(TransactionType.DEPOSIT);
     transaction.setAmount(depositRequest.getDeposit());
-    transaction.setBalanace(depositRequest.getDeposit() + account.getBalance());
+    transaction.setBalance(depositRequest.getDeposit() + account.getBalance());
     transactionRepository.save(transaction);
   }
 
@@ -48,7 +60,7 @@ public class TransactionService {
     transaction.setAccount(account);
     transaction.setTransactionType(TransactionType.WITHDRAW);
     transaction.setAmount(withdrawRequest.getWithdrawAmount());
-    transaction.setBalanace(account.getBalance() - withdrawRequest.getWithdrawAmount());
+    transaction.setBalance(account.getBalance() - withdrawRequest.getWithdrawAmount());
     transactionRepository.save(transaction);
   }
 
@@ -66,7 +78,7 @@ public class TransactionService {
     transaction.setAccount(sourceAccount);
     transaction.setTransactionType(TransactionType.TRANSFER);
     transaction.setAmount(transferRequest.getTransferAmount());
-    transaction.setBalanace(sourceAccount.getBalance() - transferRequest.getTransferAmount());
+    transaction.setBalance(sourceAccount.getBalance() - transferRequest.getTransferAmount());
     transaction.setReferenceAccount(destinationAccount.getAccountNumber());
     transactionRepository.save(transaction);
   }
