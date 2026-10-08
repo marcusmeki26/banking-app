@@ -20,9 +20,11 @@ import com.marcus.banking_app.repository.AccountRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service 
 @RequiredArgsConstructor 
+@Slf4j 
 public class AccountService {
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
@@ -47,6 +49,7 @@ public class AccountService {
   }
 
   /**
+   * <b>Account creation</b> <br>
    * If the account is valid. Insert it to {@code Account} entity
    * @param accountRequest an object of {@code AccountRequest}
    * @return an object of {@code AccountResponse}
@@ -60,6 +63,7 @@ public class AccountService {
     account.setAccountNumber(accountRequest.getAccountNumber());
     account.setAccountName(accountRequest.getAccountHolderName());
     account.setBalance(accountRequest.getDeposit());
+    log.info("Account {} is created", account.getAccountNumber());
     return accountMapper.toReponse(accountRepository.save(account));
   }
 
@@ -84,6 +88,7 @@ public class AccountService {
 
     depositResponse.setNewBalance(account.getBalance());
 
+    log.info("Account {} made a deposit with an amount of {}", account.getAccountNumber(), depositRequest.getDeposit());
     return depositResponse;
   }
 
@@ -111,6 +116,7 @@ public class AccountService {
 
     withdrawResponse.setNewBalance(newBalance);
 
+    log.info("Account {} made a withdrawal with an amount of {}", account.getAccountNumber(), withdrawRequest.getWithdrawAmount());
     return withdrawResponse;
   }
   
@@ -144,6 +150,7 @@ public class AccountService {
     accountRepository.save(sourceAccount);
     accountRepository.save(destinationAccount);
 
+    log.info("Account {} made a transfer to Account {} with an amount of {}", sourceAccount.getAccountNumber(), destinationAccount.getAccountNumber(), transferRequest.getTransferAmount());
     return transferResponse;
   }
 

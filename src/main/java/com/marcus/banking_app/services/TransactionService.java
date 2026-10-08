@@ -16,9 +16,11 @@ import com.marcus.banking_app.record.TransactionsIdOnly;
 import com.marcus.banking_app.repository.TransactionRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service 
 @RequiredArgsConstructor 
+@Slf4j 
 public class TransactionService {
   private final TransactionRepository transactionRepository;
   private final TransactionMapper transactionMapper;
@@ -45,6 +47,7 @@ public class TransactionService {
     transaction.setAmount(depositRequest.getDeposit());
     transaction.setBalance(depositRequest.getDeposit() + account.getBalance());
     transactionRepository.save(transaction);
+    log.info("Inserted a deposit transaction for account {} with an amount of {}", account.getAccountNumber(), depositRequest.getDeposit());
   }
 
   /**
@@ -62,6 +65,7 @@ public class TransactionService {
     transaction.setAmount(withdrawRequest.getWithdrawAmount());
     transaction.setBalance(account.getBalance() - withdrawRequest.getWithdrawAmount());
     transactionRepository.save(transaction);
+    log.info("Inserted a withdrawal transaction for account {} with an amount of {}", account.getAccountNumber(), withdrawRequest.getWithdrawAmount());
   }
 
   /**
@@ -81,6 +85,8 @@ public class TransactionService {
     transaction.setBalance(sourceAccount.getBalance() - transferRequest.getTransferAmount());
     transaction.setReferenceAccount(destinationAccount.getAccountNumber());
     transactionRepository.save(transaction);
+
+    log.info("Inserted a transacter transaction from account {} to account {} with an amount of {}", sourceAccount.getAccountNumber(), destinationAccount.getAccountNumber(), transferRequest.getTransferAmount());
   }
 
   /**
