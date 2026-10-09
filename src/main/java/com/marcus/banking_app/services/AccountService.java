@@ -77,7 +77,7 @@ public class AccountService {
     Accounts account = utilityService.getAccountByAccountNumber(depositRequest.getAccountNumber());
     DepositResponse depositResponse = new DepositResponse();
 
-    transactionService.InsertTransactionDeposit(account, depositRequest);
+    transactionService.insertTransactionDeposit(account, depositRequest);
 
     depositResponse.setPreviousBalance(account.getBalance());
     depositResponse.setDepositAmount(depositRequest.getDeposit());
@@ -105,10 +105,10 @@ public class AccountService {
     if(withdrawRequest.getWithdrawAmount() > account.getBalance())
       throw new InvalidValueException("INVALID_VALUE", "Withdraw amount is greater than balance");
 
-    transactionService.InsertTransactionWithdraw(account, withdrawRequest);
+    transactionService.insertTransactionWithdraw(account, withdrawRequest);
 
     withdrawResponse.setPreviousBalance(account.getBalance());
-    withdrawResponse.setPreviousBalance(withdrawRequest.getWithdrawAmount());
+    withdrawResponse.setWithdrawAmount(withdrawRequest.getWithdrawAmount());
 
     Float newBalance = account.getBalance() - withdrawRequest.getWithdrawAmount();
     account.setBalance(newBalance);
@@ -141,7 +141,7 @@ public class AccountService {
     transferResponse.setDestinationAccountNumber(destinationAccount.getAccountNumber());
     transferResponse.setTransferAmount(transferRequest.getTransferAmount());
 
-    transactionService.InsertTransactionTransfer(sourceAccount, destinationAccount, transferRequest);
+    transactionService.insertTransactionTransfer(sourceAccount, destinationAccount, transferRequest);
 
     Float transferAmount = transferRequest.getTransferAmount();
     Float newBalance = sourceAccount.getBalance() - transferAmount;

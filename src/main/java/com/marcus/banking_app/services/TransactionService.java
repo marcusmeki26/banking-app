@@ -37,7 +37,7 @@ public class TransactionService {
    * @param account an object of {@code Accounts} that performs the action
    * @param depositRequest an object of {@code DepositRequest} 
    */
-  public void InsertTransactionDeposit(Accounts account, DepositRequest depositRequest){
+  public void insertTransactionDeposit(Accounts account, DepositRequest depositRequest){
     Transactions transaction = new Transactions();
 
     String transactionRef = String.format("TXN-%03d", getNextTransactionReference());
@@ -55,7 +55,7 @@ public class TransactionService {
    * @param account an object of {@code Accounts} that performs the action
    * @param withdrawRequest an object of {@code WithdrawRequest}
    */
-  public void InsertTransactionWithdraw(Accounts account, WithdrawRequest withdrawRequest){
+  public void insertTransactionWithdraw(Accounts account, WithdrawRequest withdrawRequest){
     Transactions transaction = new Transactions();
 
     String transactionRef = String.format("TXN-%03d", getNextTransactionReference());
@@ -74,7 +74,7 @@ public class TransactionService {
    * @param destinationAccount an object of {@code Accounts} entity which is the destination of funds
    * @param transferRequest an object of {@code TransferRequest}
    */
-  public void InsertTransactionTransfer(Accounts sourceAccount, Accounts destinationAccount, TransferRequest transferRequest){
+  public void insertTransactionTransfer(Accounts sourceAccount, Accounts destinationAccount, TransferRequest transferRequest){
     Transactions transaction = new Transactions();
 
     String transactionRef = String.format("TXN-%03d", getNextTransactionReference());
@@ -93,7 +93,7 @@ public class TransactionService {
    * Gets the last record from {@code Transactions} entity
    * @return the last id from {@code Transactions} entity, if empty returns 1
    */
-  public Integer getNextTransactionReference(){
+  private Integer getNextTransactionReference(){
     TransactionsIdOnly transaction = transactionRepository.findTopProjectedByOrderByIdDesc();
   
     return (transaction == null) ? 1 : transaction.id() + 1;  

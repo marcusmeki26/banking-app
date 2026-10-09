@@ -50,13 +50,13 @@ public class AccountController {
 
   @PostMapping("/deposit") 
   public ResponseEntity<DepositResponse> deposit(
-    @Valid @RequestBody DepositRequest depositRequest
+    @Valid @RequestBody DepositRequest depositRequest 
   ){
     return ResponseEntity.ok().body(accountService.deposit(depositRequest));
   }
 
   @PostMapping("/withdraw")
-  public ResponseEntity<WithdrawResponse> deposit(
+  public ResponseEntity<WithdrawResponse> withdraw(
     @Valid @RequestBody WithdrawRequest withdrawRequest
   ){
     return ResponseEntity.ok().body(accountService.withdraw(withdrawRequest));
