@@ -62,7 +62,7 @@ Contains custom exceptions and global exception handling for errors such as reso
 The following endpoints provide CRUD functionality for bank accounts.
 ### **Account**  
 ```
-Method    Endpoint	            Description    
+Method    Endpoint              Description    
 POST      /v1/account           Create a new bank account   
 POST      /v1/account/deposit   Performs deposit of a specific account  
 POST      /v1/account/withdraw  Performs withdraw of a specific account  
@@ -72,7 +72,7 @@ GET       /v1/{accountNumber}   Retrieves balance of a specifc account
 ```
 ### **Transaction**  
 ```
-Method    Endpoint	            Description    
+Method    Endpoint              Description    
 GET       /v1/transaction       Retrieves all transaction of a specific account
 ```
 
