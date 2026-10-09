@@ -63,11 +63,11 @@ The following endpoints provide CRUD functionality for bank accounts.
 ### **Account**  
 ```
 Method    Endpoint	            Description    
-POST	    /v1/account	          Create a new bank account   
+POST      /v1/account           Create a new bank account   
 POST      /v1/account/deposit   Performs deposit of a specific account  
 POST      /v1/account/withdraw  Performs withdraw of a specific account  
 POST      /v1/account/transfer  Performs transfering of funds from source to destination account   
-GET	      /v1/account	          Retrieves all bank accounts      
+GET       /v1/account           Retrieves all bank accounts      
 GET       /v1/{accountNumber}   Retrieves balance of a specifc account
 ```
 ### **Transaction**  
