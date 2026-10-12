@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
   
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorMessage> handleResourceNotFoundException(ResourceNotFoundException ex){
-    log.warn("Unable to process account does not exist: {}", ex.getMessage());
+    log.warn("Unable to process account does not exist or deleted: {}", ex.getMessage());
     return new ResponseEntity<>(new ErrorMessage(ex.getCode(), ex.getMessage()), HttpStatus.UNPROCESSABLE_CONTENT);
   }
   
