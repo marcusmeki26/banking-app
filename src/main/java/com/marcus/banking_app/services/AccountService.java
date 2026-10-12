@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.marcus.banking_app.dto.AccountPatchRequest;
 import com.marcus.banking_app.dto.AccountRequest;
 import com.marcus.banking_app.dto.AccountResponse;
 import com.marcus.banking_app.dto.DepositRequest;
@@ -36,7 +37,7 @@ public class AccountService {
    * @return returns a {@code List} of {@code AccountResponse}
    */
   public List<AccountResponse> getAllAccounts(){
-    return accountMapper.toResponseList(accountRepository.findAll());
+    return accountMapper.toResponseList(accountRepository.findActiveAccounts(false));
   }
 
   /**
@@ -63,6 +64,7 @@ public class AccountService {
     account.setAccountNumber(accountRequest.getAccountNumber());
     account.setAccountName(accountRequest.getAccountHolderName());
     account.setBalance(accountRequest.getDeposit());
+    account.setIsDeleted(false); // Default value since this is an account creation
     log.info("Account {} is created", account.getAccountNumber());
     return accountMapper.toReponse(accountRepository.save(account));
   }
@@ -152,6 +154,38 @@ public class AccountService {
 
     log.info("Account {} made a transfer to Account {} with an amount of {}", sourceAccount.getAccountNumber(), destinationAccount.getAccountNumber(), transferRequest.getTransferAmount());
     return transferResponse;
+  }
+
+  /**
+   * Updates the specified account that is based on account number
+   * @param accountPatchRequest an object of {@code AccountPatchRequest}
+   * @param accountNumber the account number to update
+   * @return an object of {@code AccountReponse}
+   */
+  public AccountResponse updateAccount(AccountPatchRequest accountPatchRequest, String accountNumber){
+    Accounts patchAccount = utilityService.getAccountByAccountNumber(accountNumber);
+
+    if(accountPatchRequest.getAccountName().isBlank())
+      throw new InvalidValueException("INVALID_VALUE", "account name is required");
+    
+    String oldValue = patchAccount.getAccountName();
+    patchAccount.setAccountName(accountPatchRequest.getAccountName());
+    log.info("Account {} performs an update. \n" +
+              "Value: " + 
+              "\t Old Value: {} New Value: {}", patchAccount.getAccountNumber(), oldValue, patchAccount.getAccountName());
+    return accountMapper.toReponse(accountRepository.save(patchAccount));
+  }
+
+  /**
+   * Deletes the specified account that is based on account number
+   * @param accountNumber the account number to delete
+   */
+  public void deleteAccount(String accountNumber){
+    Accounts softDeleteAccount = utilityService.getAccountByAccountNumber(accountNumber);
+
+    softDeleteAccount.setIsDeleted(true);
+    accountRepository.save(softDeleteAccount);
+    log.info("Account {} has been soft deleted", softDeleteAccount.getAccountNumber());
   }
 
   // ========================================================

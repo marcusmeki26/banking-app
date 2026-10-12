@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,17 +25,23 @@ public class Accounts {
   @SequenceGenerator (name = "acc_id_sequence", sequenceName = "acc_id_sequence", initialValue = 100_000, allocationSize = 1)
   private Long id;
 
-  @Column (unique = true)
+  @Column(unique = true)
   private String accountNumber;
 
-  @Column (nullable = false)
+  @Column(nullable = false)
   private String accountName;
 
   private Float balance;
+
+  @Column(nullable = false)
+  private Boolean isDeleted;
 
   @OneToMany(mappedBy = "account")
   private List<Transactions> transactions;
 
   @CreationTimestamp 
   private LocalDateTime createdAt;
+  
+  @UpdateTimestamp
+  private LocalDateTime updatedAt;
 }
