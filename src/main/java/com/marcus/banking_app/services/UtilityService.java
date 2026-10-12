@@ -21,7 +21,7 @@ public class UtilityService {
   public Accounts getAccountByAccountNumber(String accountNumber){
     Accounts account = accountRepository.findByAccountNumber(accountNumber);
 
-    if(account == null)
+    if(account == null || account.getIsDeleted())
       throw new ResourceNotFoundException("ACCOUNT_NUMBER_NOT_EXISTING", "No existing user found");
 
     return account;
